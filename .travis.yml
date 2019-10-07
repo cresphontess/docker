@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t cresphontess/docker-react-example -f Dockerfile.dev .
+
+script:
+  - docker run -e CI=true cresphontess/docker-react-example npm run test -- --coverage
+
+deploy:
+  provider: elasticbeanstalk
+  region: "us-east-2"
+  app: "docker-app"
+  env: "DockerApp-env"
+  bucket_name: "elasticbeanstalk-us-east-2-273845791300"
+  bucket_path: "docker-app"
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: "$AWS_SECRET_KEY"
